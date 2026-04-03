@@ -179,7 +179,7 @@ def check_gmail() -> list[dict]:
     try:
         mail = imaplib.IMAP4_SSL("imap.gmail.com")
         mail.login(GMAIL_USER, GMAIL_APP_PASSWORD)
-        mail.select("INBOX")
+        mail.select("INBOX", readonly=True)
 
         # Search for emails from the last 2 days
         since_date = (datetime.now() - timedelta(days=2)).strftime("%d-%b-%Y")
@@ -191,7 +191,7 @@ def check_gmail() -> list[dict]:
 
         for num in message_numbers[0].split():
             try:
-                _, msg_data = mail.fetch(num, "(RFC822 FLAGS)")
+                _, msg_data = mail.fetch(num, "(BODY.PEEK[] FLAGS)")
             except Exception:
                 continue
             if not msg_data or not msg_data[0]:
